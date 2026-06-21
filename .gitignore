@@ -1,0 +1,58 @@
+# =========================================================================
+# TurkRef v1.0 - 
+# =========================================================================
+
+# Bağımlılıklar (Dependencies)
+node_modules/
+jspm_packages/
+.pnp
+.pnp.js
+
+# Üretim, Dağıtım ve Derleme Çıktıları (Build Outputs)
+dist/
+build/
+out/
+.next/
+.nuxt/
+bin/
+obj/
+*.sln
+
+# Python, Analiz ve Arka Plan İşlemleri (Python & NLP Cache)
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv
+venv/
+ENV/
+env/
+
+# Günlükler, Loglar ve Veritabanları (Logs & Databases)
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.sqlite
+*.db
+
+# İşletim Sistemi Çöpleri (OS Files)
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+desktop.ini
+Desktop.ini
+.directory
+$RECYCLE.BIN/
+
+# IDE, Editör ve Workspace Ayarları
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.swp
