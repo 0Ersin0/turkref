@@ -1,0 +1,39 @@
+TurkRef v1.0
+Copyright 2026 Ersin Özüdoğru (EO Digital Lab)
+
+This product includes software developed at EO Digital Lab
+by Ersin Ö., Doç. Dr. Ferdi B., Rabia Betül D., and Taha Alper T.
+
+-------------------------------------------------------------------------
+Third-Party Open Source Components and Attributions:
+-------------------------------------------------------------------------
+
+SheetJS Community Edition
+Copyright (C) 2012-present SheetJS LLC
+Licensed under the Apache License, Version 2.0
+https://sheetjs.com/
+
+leader-line-new (v1.1.9)
+A fork of leader-line by anseki.
+Original Copyright (c) anseki -- https://github.com/anseki/leader-line
+Fork Copyright (c) II-alex-II -- https://github.com/II-alex-II/leader-line-new
+Licensed under the MIT License
+
+Font Awesome Free
+Copyright (c) Fonticons Inc.
+Icons   : CC BY 4.0 License
+Fonts   : SIL Open Font License 1.1
+Code    : MIT License
+https://fontawesome.com
+
+Inter Font
+Copyright (c) 2016 The Inter Project Authors (Rasmus Andersson)
+Licensed under the SIL Open Font License 1.1
+https://rsms.me/inter/
+
+Lora Font
+Copyright (c) 2011 The Lora Project Authors (Cyreal)
+Licensed under the SIL Open Font License 1.1
+https://fonts.google.com/specimen/Lora
+(Note: Font files are self-hosted and temporarily omitted in v1.0.
+       See fonts.css for details.)

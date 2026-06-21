@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="tr" id="html-root">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSP: V1 MVP cloud model — CDN assets allowed -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src  'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://cdn.sheetjs.com;
+        style-src   'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+        font-src    'self' https://cdnjs.cloudflare.com;
+        img-src     'self' data:;
+        connect-src 'none';
+        object-src  'none';
+        base-uri    'self';
+        form-action 'none';
+        frame-ancestors 'none';
+    ">
+
+    <link rel="stylesheet" href="fonts.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+
+    <script src="https://cdn.jsdelivr.net/npm/leader-line-new@1.1.9/leader-line.min.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+    <!-- Print: hide LeaderLine SVGs to prevent PDF layout wreckage -->
+    <style>
+        @media print {
+            .leader-line {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Smart Alert Banner — platform detection (web/mobile/Electron) -->
+    <div id="smart-alert-banner" class="smart-banner" style="display: none;">
+        <div id="smart-alert-content" class="smart-alert-text"></div>
+        <button id="close-smart-alert" title="Kapat"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- ===================================================================
+         PRIVACY & TERMS OVERLAY — blocks all interaction until accepted
+    ==================================================================== -->
+    <div id="privacy-overlay" class="privacy-overlay" role="dialog" aria-modal="true" aria-labelledby="legal-title">
+        <div class="legal-modal-content">
+
+            <div class="legal-header">
+                <div class="legal-logo">
+                    <i class="fas fa-microscope"></i>
+                    <span>TurkRef</span>
+                </div>
+                <div class="lang-toggle-group" id="modal-lang-toggle">
+                    <button class="lang-btn active" id="modal-btn-tr" aria-label="Türkçe">TR</button>
+                    <span class="lang-sep">|</span>
+                    <button class="lang-btn" id="modal-btn-en" aria-label="English">EN</button>
+                </div>
+            </div>
+
+            <h2 id="legal-title" class="legal-title" data-i18n="legalTitle"></h2>
+            <p class="legal-subtitle" data-i18n="legalSubtitle"></p>
+
+            <div class="legal-body">
+                <div class="legal-section">
+                    <h3><i class="fas fa-shield-alt"></i> <span data-i18n="privacyTitle"></span></h3>
+                    <p id="privacyBodyText"></p>
+                    <div id="thirdPartyNoticeContainer"></div>
+                </div>
+                <div class="legal-section">
+                    <h3><i class="fas fa-exclamation-triangle"></i> <span data-i18n="disclaimerTitle"></span></h3>
+                    <p data-i18n="disclaimerBody"></p>
+                </div>
+                <div class="legal-section">
+                    <h3><i class="fas fa-graduation-cap"></i> <span data-i18n="nonCommTitle"></span></h3>
+                    <p data-i18n="nonCommBody"></p>
+                </div>
+
+                <div
+                    style="margin-top: 15px; padding: 12px 16px; background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 8px; color: #991B1B; font-size: 0.85rem; font-weight: 600; text-align: center;">
+                    <span data-i18n="eulaWarning"></span>
+                </div>
+            </div>
+
+            <div class="legal-footer">
+                <p class="legal-credits">
+                    <strong data-i18n="devTeamLabel">Geliştirici Ekip:</strong><br>
+                    <span class="team-member"><strong>Doç. Dr. Ferdi B.</strong> (<span data-i18n="roleAdvisor">Akademik
+                            Danışman</span>)</span> |
+                    <span class="team-member"><strong>Ersin Ö.</strong> (<span data-i18n="roleArchitect">Yazılım
+                            Mimarı</span>)</span> |
+                    <span class="team-member"><strong>Taha Alper T.</strong> (<span
+                            data-i18n="roleResearcher">Araştırmacı / Dilbilimci</span>)</span> |
+                    <span class="team-member"><strong>Rabia Betül D.</strong> (<span
+                            data-i18n="roleResearcher">Araştırmacı / Dilbilimci</span>)</span>
+                </p>
+                <button class="btn btn-accept" id="accept-btn">
+                    <i class="fas fa-check-circle"></i>
+                    <span data-i18n="acceptBtn"></span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===================================================================
+         MAIN APPLICATION
+    ==================================================================== -->
+
+    <header class="glass-header">
+        <div class="header-top-row">
+            <div class="header-main-title">
+                <h1>TurkRef <span
+                        style="font-size: 0.5em; vertical-align: middle; opacity: 0.85; margin-left: 6px; font-weight: 500; background: rgba(255,255,255,0.15); padding: 3px 8px; border-radius: 12px; letter-spacing: 0.5px;">v1.0</span>
+                </h1>
+            </div>
+            <div class="lang-toggle-group header-lang-switcher" id="header-lang-toggle">
+                <button class="lang-btn active" id="header-btn-tr" aria-label="Türkçe">TR</button>
+                <span class="lang-sep">|</span>
+                <button class="lang-btn" id="header-btn-en" aria-label="English">EN</button>
+            </div>
+        </div>
+
+        <div class="header-names">
+            <div class="team-credits-container"
+                style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; font-size: 0.9em; margin-top: 8px; color: #ecf0f1;">
+                <span data-i18n="devTeamLabel" style="margin-right: 5px; opacity: 0.9;">Geliştirici Ekip:</span>
+                <span class="team-member"><strong>Doç. Dr. Ferdi B.</strong> (<span data-i18n="roleAdvisor">Akademik
+                        Danışman</span>)</span> <span style="opacity: 0.5;">|</span>
+                <span class="team-member"><strong>Ersin Ö.</strong> (<span data-i18n="roleArchitect">Yazılım
+                        Mimarı</span>)</span> <span style="opacity: 0.5;">|</span>
+                <span class="team-member"><strong>Taha Alper T.</strong> (<span data-i18n="roleResearcher">Araştırmacı /
+                        Dilbilimci</span>)</span> <span style="opacity: 0.5;">|</span>
+                <span class="team-member"><strong>Rabia Betül D.</strong> (<span data-i18n="roleResearcher">Araştırmacı
+                        / Dilbilimci</span>)</span>
+            </div>
+        </div>
+
+        <h3 data-i18n="appSubtitle"></h3>
+
+        <div class="tabs-nav">
+            <button class="nav-btn active" id="nav-dashboard">
+                <i class="fas fa-microscope"></i> <span data-i18n="navDashboard"></span>
+            </button>
+            <div class="mode-toggle-group" id="modeToggle">
+                <button class="mode-btn active" id="mode-rst" data-mode="rst">
+                    <i class="fas fa-project-diagram"></i> <span data-i18n="modeRST">RST Analizi</span>
+                </button>
+                <button class="mode-btn" id="mode-coref" data-mode="coref">
+                    <i class="fas fa-link"></i> <span data-i18n="modeCoref">Gönderim</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="dashboard-view" class="three-panel-grid">
+
+        <!-- Panel 1: Input & Segmentation -->
+        <section class="panel left-panel glass-panel">
+            <div class="panel-header">
+                <h2><i class="fas fa-align-left"></i> <span data-i18n="panel1Title"></span></h2>
+                <div class="panel-actions">
+                    <button class="icon-btn" data-i18n-title="clearBtn" title="Temizle">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="panel-content">
+                <textarea id="inputText" data-i18n-placeholder="inputPlaceholder"
+                    placeholder="Analiz edilecek Türkçe metni buraya giriniz..." maxlength="40000"></textarea>
+
+                <div class="sample-selector">
+                    <label for="sampleDropdown"><i class="fas fa-book"></i> <span
+                            data-i18n="sampleLabel"></span></label>
+                    <select id="sampleDropdown" class="premium-select">
+                        <option value="" data-i18n="sampleDefault"></option>
+                        <option value="nutuk">Nutuk (Mustafa Kemal Atatürk)</option>
+                        <option value="kasagi">Kaşağı (Ömer Seyfettin)</option>
+                        <option value="custom" data-i18n="sampleCustom"></option>
+                    </select>
+                </div>
+
+                <div class="controls-row">
+                    <button class="btn btn-primary" id="analyzeBtn">
+                        <i class="fas fa-magic"></i> <span data-i18n="analyzeBtn"></span>
+                    </button>
+                </div>
+
+                <div class="segment-list" id="segmentList">
+                    <div class="empty-state" data-i18n="emptyState"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Panel 2: RST Workspace — LeaderLine canvas -->
+        <section class="panel center-panel glass-panel" style="position: relative; padding-bottom: 0;">
+            <div class="panel-header">
+                <h2><i class="fas fa-project-diagram" id="panel2Icon"></i> <span data-i18n="panel2Title"
+                        id="panel2TitleText"></span></h2>
+                <div class="panel-actions">
+                    <button class="btn-sm btn-outline" id="undoBtn" title="Geri Al (Ctrl+Z)">
+                        <i class="fas fa-reply"></i> <span data-i18n="undoBtn">Geri Al</span>
+                    </button>
+                    <button class="btn-sm btn-outline" id="resetBtn">
+                        <i class="fas fa-undo"></i> <span data-i18n="resetBtn"></span>
+                    </button>
+                    <span class="status-indicator" id="workspaceStatus" data-i18n="statusReady"></span>
+                </div>
+            </div>
+            <div class="panel-content" id="rst-canvas" style="margin-bottom: 0;">
+                <div id="manual-workspace"
+                    style="line-height: 4.5; font-size: 1.15rem; position: relative; padding: 20px; min-height: 500px; max-height: 60vh; overflow-y: auto; text-align: justify;">
+                </div>
+                <div class="canvas-instruction" id="canvasInstruction" data-i18n="canvasHint"></div>
+            </div>
+
+
+        </section>
+
+        <!-- Panel 3: Tagging Details -->
+        <section class="panel right-panel glass-panel">
+            <div class="panel-header">
+                <h2><i class="fas fa-info-circle"></i> <span data-i18n="panel3Title"></span></h2>
+                <div class="panel-actions">
+                    <button class="btn btn-sm btn-export">
+                        <i class="fas fa-file-excel"></i> XLSX
+                    </button>
+                    <button class="btn btn-sm btn-export">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </button>
+                </div>
+            </div>
+            <div class="panel-content" id="analysis-details">
+                <div id="dispersion-wrapper" class="detail-block" style="display: none; margin-bottom: 20px;">
+                    <h3
+                        style="color: #7c3aed; font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-barcode"></i> <span>Sözcük Dağılım Grafiği</span>
+                    </h3>
+                    <div class="content-box"
+                        style="padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <div
+                            style="font-size: 0.85rem; margin-bottom: 8px; color: #475569; display: flex; justify-content: space-between; font-family: 'Inter', sans-serif;">
+                            <span>Seçili: <strong id="target-word-display"
+                                    style="color: #7c3aed; background: #f3e8ff; padding: 2px 6px; border-radius: 4px;">-</strong></span>
+                        </div>
+                        <div style="width: 100%; height: 45px; position: relative;">
+                            <canvas id="dispersionCanvas"
+                                style="width: 100%; height: 100%; background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; display: block;"></canvas>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #94a3b8; margin-top: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', sans-serif;">
+                            <span data-i18n="plotStart">Metin Başı</span>
+                            <span data-i18n="plotEnd">Metin Sonu</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-block">
+                    <h3 data-i18n="wordAnalysisTitle"></h3>
+                    <div id="word-analysis-content" class="content-box serif-text">
+                        <p class="text-muted" data-i18n="wordAnalysisEmpty"></p>
+                    </div>
+                </div>
+                <div class="detail-block">
+                    <h3 data-i18n="nodeDetailTitle"></h3>
+                    <div id="node-details" class="content-box">
+                        <p class="text-muted" data-i18n="nodeDetailEmpty"></p>
+                    </div>
+                </div>
+
+                <!-- Statistics Accordion — real-time relation counts -->
+                <div class="stats-panel no-print">
+                    <div class="stats-header" id="statsToggle">
+                        <span><i class="fas fa-chart-bar" style="margin-right:6px;"></i> <span
+                                data-i18n="statsTitle">Analiz İstatistikleri</span></span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="stats-content" id="statsContent">
+                        <div id="statsList">
+                            <div class="text-muted" data-i18n="statsEmpty">Henüz veri yok.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="custom-confirm-modal" class="modal" style="display: none; z-index: 10001;">
+        <div class="modal-content"
+            style="background: #FFFFFF; max-width: 400px; text-align: center; padding: 24px; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);">
+            <div style="font-size: 3rem; color: #EF4444; margin-bottom: 16px;">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h3 style="margin-bottom: 12px; color: #003366; font-family: 'Inter', sans-serif; font-weight: 700;"
+                data-i18n="resetConfirmTitle"></h3>
+            <p style="color: #475569; margin-bottom: 24px; font-size: 0.95rem; font-family: 'Inter', sans-serif; line-height: 1.5;"
+                id="custom-confirm-text"></p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button class="btn btn-outline" id="custom-confirm-cancel" data-i18n="popupCancel"></button>
+                <button class="btn btn-primary" style="background: #EF4444; border-color: #EF4444; color: white;"
+                    id="custom-confirm-ok" data-i18n="resetBtn"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Section (Hidden) -->
+    <div id="print-section" class="print-only">
+        <div class="print-header">
+            <h1>TurkRef — RST Etiketleme Raporu</h1>
+            <p>
+                <span data-i18n="devTeamLabel">Geliştirici Ekip:</span>
+                Doç. Dr. Ferdi B. (<span data-i18n="roleAdvisor">Akademik Danışman</span>) |
+                Ersin Ö. (<span data-i18n="roleArchitect">Yazılım Mimarı</span>) |
+                Taha Alper T. (<span data-i18n="roleResearcher">Araştırmacı / Dilbilimci</span>) |
+                Rabia Betül D. (<span data-i18n="roleResearcher">Araştırmacı / Dilbilimci</span>)
+            </p>
+            <p class="print-date"></p>
+        </div>
+        <div class="print-content">
+            <h2 data-i18n="printOriginal"></h2>
+            <div id="print-original-text" class="serif-text"></div>
+            <h2 data-i18n="printEdus"></h2>
+            <div id="print-edus"></div>
+            <h2 data-i18n="printAnnotations"></h2>
+            <div id="print-annotations"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>
+            <span data-i18n="devTeamLabel">Geliştirici Ekip:</span>
+            Doç. Dr. Ferdi B. (<span data-i18n="roleAdvisor">Akademik Danışman</span>) <span
+                class="footer-divider">|</span>
+            Ersin Ö. (<span data-i18n="roleArchitect">Yazılım Mimarı</span>) <span class="footer-divider">|</span>
+            Taha Alper T. (<span data-i18n="roleResearcher">Araştırmacı / Dilbilimci</span>) <span
+                class="footer-divider">|</span>
+            Rabia Betül D. (<span data-i18n="roleResearcher">Araştırmacı / Dilbilimci</span>)
+        </p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,81 @@
+/* =========================================================================
+ * fonts.css — V1.0 Teknik Borç (Technical Debt)
+ * GÜVENLİK N-07: Self-hosted fontlar (Google Fonts CDN bağımlılığı kaldırıldı)
+ * =========================================================================
+ *
+ * DİKKAT: V1.0 lansmanında 'fonts' klasörü ve fiziki .woff2 dosyaları 
+ * repoya dahil edilmemiştir. Geliştirici konsolunda (F12) "404 Not Found" 
+ * hatası almamak ve vitrini temiz tutmak için aşağıdaki tanımlamalar 
+ * geçici olarak yorum satırına alınmıştır.
+ * * Sistem şu an varsayılan (fallback) fontları kullanmaktadır.
+ * V2.0 güncellemesinde dosyalar indirilip bu yorum satırları açılacaktır.
+ */
+
+/* ── Inter ────────────────────────────────────────────────────────────────
+
+@font-face {
+    font-family: 'Inter';
+    src: url('fonts/inter-v18-latin-ext_latin-300.woff2') format('woff2');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('fonts/inter-v18-latin-ext_latin-regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('fonts/inter-v18-latin-ext_latin-500.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('fonts/inter-v18-latin-ext_latin-600.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('fonts/inter-v18-latin-ext_latin-700.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ── Lora ─────────────────────────────────────────────────────────────────
+
+@font-face {
+    font-family: 'Lora';
+    src: url('fonts/lora-v35-latin-ext_latin-regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Lora';
+    src: url('fonts/lora-v35-latin-ext_latin-600.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Lora';
+    src: url('fonts/lora-v35-latin-ext_latin-italic.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+*/

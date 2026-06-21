@@ -1,0 +1,40 @@
+{
+  "name": "turkref",
+  "version": "1.0.0",
+  "description": "TurkRef - RST Analiz Laboratuvarı",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.turkref.app",
+    "productName": "TurkRef",
+    "asar": true,
+    "directories": {
+      "buildResources": "build"
+    },
+    "files": [
+     "index.html",
+      "app.js",
+      "style.css",
+      "fonts.css",
+      "fonts/**/*",
+      "main.js",
+      "!node_modules/.cache/**",
+      "!**/*.map"
+    ],
+    "win": {
+      "target": "portable",
+      "icon": "build/TurkRef_icon.png"
+    },
+    "portable": {
+      "artifactName": "TurkRef-Portable.exe"
+    }
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "25.1.8"
+  }
+} 
